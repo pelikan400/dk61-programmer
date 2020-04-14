@@ -1,0 +1,37 @@
+{
+  "author": "Edmund Bayerle",
+  "notes": "Layer1 is the normal default layers with just Z and Y swapped, Layer2 has arrow keys on the right side with RAlt, /,Menu, RCtrl. Switching between Layer1 and Layer2 is with Fn+Enter Layer3 has also PgUp, PgDown on ] amd '",
+
+  "colorCodes": {
+    "Layer1Color": "#0d0",
+    "Layer1Arrows": "#d00",
+    "Layer2Color": "#dd0",
+    "Layer3Color": "#00d"
+  },
+  "layers" : {
+    "default": {
+      "Z": "Y",
+      "Y": "Z"
+
+    },
+    "Layer1": {
+      "Z": "Y",
+      "Y": "Z"
+    },
+    "FnLayer1" : {
+      "Enter" : "Layer2Button"
+    },
+    "Layer2": {
+      "RAlt": "Left",
+      "Menu": "Down",
+      "RCtrl": "Right",
+      "Slash": "Up"
+    },
+    "FnLayer2": {
+      "Enter": "Layer1Button"
+    }
+  },
+  "colors": {
+
+  }
+}
