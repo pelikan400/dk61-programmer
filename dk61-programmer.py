@@ -1,11 +1,181 @@
-import argparse
+#!/usr/bin/python3
+# dk61-programmer.py - programming the keyboard from Mac OS
+#
+#
+# Copyright (c) 2020 Edmund Bayerle <e.bayerle@gmail.com>
+# Portions of this code are Copyright (c) 2019 Will Woods <w@wizard.zone>
+#
+# You shouldn't be using this, because it's horrible, but if you are,
+# consider it licensed as GPLv2+. Also, I'm sorry.
+
 import json
-from gk64 import GK64, CommandPacket
 import logging
 import sys
 from enum import Enum
+import struct
+from collections import namedtuple
+import hid
+from pprint import PrettyPrinter
+
+import argparse
 
 logger = None
+pp = PrettyPrinter()
+
+
+# unoptimized, translated from http://mdfs.net/Info/Comp/Comms/CRC16.htm
+def crc16(data, poly=0x1021, iv=0x0000, xorf=0x0000):
+    crc = int(iv)
+    for b in bytearray(data):
+        crc ^= (b << 8)
+        for _ in range(0, 8):
+            crc <<= 1
+            if crc & 0x10000:
+                crc = (crc ^ poly) & 0xffff  # xor with poly and trunc to 16bit
+    return (crc & 0xffff) ^ xorf
+
+
+def crc16_usb(data, iv=0xffff):
+    return crc16(data, poly=0x8005, iv=0xffff, xorf=0xffff)
+
+
+def mycrc16(data, iv=0xffff):
+    return crc16(data, poly=0x1021, iv=0xffff, xorf=0x0000)
+
+
+def hexdump_line(data):
+    linedata = bytearray(data[:16])
+    hexbytes = ["%02x" % b for b in linedata] + (["  "] * (16 - len(linedata)))
+    printable = ''.join(chr(b) if b >= 0x20 and b < 0x7f else '.' for b in linedata)
+    return '{}  {}   {} {}'.format(' '.join(hexbytes[:8]),
+                                   ' '.join(hexbytes[8:]),
+                                   printable[:8],
+                                   printable[8:])
+
+
+def hexdump_iterlines(data, start=0):
+    offset = 0
+    while offset < len(data):
+        yield "{:08x}  {}".format(start + offset,
+                                  hexdump_line(data[offset:offset + 0x10]))
+
+
+def hexdump(data, start=0):
+    for line in hexdump_iterlines(data, start):
+        print(line)
+
+
+# USB Packet Structure:
+#
+# Data is usually sent to endpoint 4, and the device answers on endpoint 3.
+# In firmware update mode (see below), send to endpoint 2 and get answers on 1.
+#
+# Outgoing and incoming packets are always 0x64 bytes long, and have roughly
+# the same structure. Example outgoing packet data:
+#
+#   01 01 00 00 00 00 74 1b  00 00 00 00 00 00 00 00   ......t. ........
+#   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+#   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+#   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+#
+# And the reply:
+#
+#   01 01 01 00 00 00 35 25  01 39 10 02 09 01 00 00   ......5% .9......
+#   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+#   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+#   00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+#
+# The structure is as follows:
+# * 8 byte header, then up to 56 (0x38) bytes of data (padded with zeros)
+# * Command header: 01 01 00 00 00 00 74 1b
+#   * Byte 0: Command
+#   * Byte 1: Subcommand
+#   * Byte 2-3: Offset (used for uploading firmware in chunks)
+#   * Byte 4: padding? (always 00..)
+#   * Byte 5: Size of payload (max 0x38)
+#   * Byte 6-7: checksum
+#     * CRC16/CCITT-FALSE: little-endian, polynomial 0x1021, IV 0xFFFF
+#     * Calculated over the whole 64-byte packet, with checksum = 00 00
+#   * Byte 8-63: Payload data, padded with 00s to 64 bytes total
+
+# * Reply header: 01 01 01 00 00 00 35 25
+#   * Byte 0: Command
+#   * Byte 1: Subcommand
+#   * Byte 2: Result - 01 for success, 00 otherwise
+#   * Byte 3-5: unused/padding (always 00..)
+#   * Byte 6-7: checksum, as above
+#   * Byte 8-63: payload (padded to 64 bytes long with 0x00's)
+#
+# (You'll note that the Reply doesn't seem to tell you how much data it's
+# sending you, which makes interpreting the reply a little trickier..)
+
+class BindataMixin(object):
+    _struct = None
+
+    @classmethod
+    def _unpack(cls, buf):
+        return cls(*cls._struct.unpack(buf))
+
+    def _pack(self):
+        return self._struct.pack(*self)
+
+    def _hexdump(self):
+        data = self._pack()
+        size = self._struct.size
+        return '\n'.join(hexdump_line(data[s:s + 0x10])
+                         for s in range(0, size, 0x10))
+
+    def _calculate_checksum(self):
+        return mycrc16(self._replace(checksum=0)._pack())
+
+    def _replace_checksum(self):
+        return self._replace(checksum=self._calculate_checksum())
+
+    def _checksum_ok(self):
+        return self.checksum == self._calculate_checksum()
+
+
+PacketStruct = struct.Struct("<BBHBBH56s")
+
+CommandPacketTuple = namedtuple("CommandPacketTuple", "cmd subcmd offset pad1 length checksum data")
+
+
+class CommandPacket(CommandPacketTuple, BindataMixin):
+    _struct = PacketStruct
+
+
+ReplyPacketTuple = namedtuple("ReplyPacketTuple", "cmd subcmd result pad1 pad2 checksum data")
+
+
+class ReplyPacket(ReplyPacketTuple, BindataMixin):
+    _struct = PacketStruct
+
+
+# TODO: document the .bimg header format here!!
+
+BImgHdrTuple = namedtuple("BImgHdrTuple", "magic checksum ts size datachecksum itype name")
+
+
+class BImgHdr(BImgHdrTuple, BindataMixin):
+    _struct = struct.Struct("<IIIIII8s")
+
+
+class Error(Exception):
+    '''Base class for exceptions in this module'''
+    pass
+
+
+class CmdError(Error):
+    '''Exception raised when the GK6x reply doesn't indicate success.
+
+    Attributes:
+        message: explanation of the error
+        reply: the ReplyPacket object
+    '''
+
+    def __init__(self, message, reply):
+        self.message = message
+        self.reply = reply
 
 
 class OpCodes(Enum):
@@ -34,7 +204,7 @@ class KeyboardLayer(Enum):
 
 
 # used by LayerResetDataType
-class KeyboardLayerDataType:
+class KeyboardLayerDataType(Enum):
     Invalid = 0
     KeySet = 1
     LEData = 3
@@ -44,243 +214,245 @@ class KeyboardLayerDataType:
     FnKeySet = 7
 
 
-class DK61(GK64):
-    mapKeycodes = {
-        "None": "0",
+class DK61(object):
+    VendorId = 0x1ea7
+    ProductId = 0x0907
 
-        "Esc": "0x02002900",
-        "Disabled": "0x02000000",
-        "F1": "0x02003A00",
-        "F2": "0x02003B00",
-        "F3": "0x02003C00",
-        "F4": "0x02003D00",
-        "F5": "0x02003E00",
-        "F6": "0x02003F00",
-        "F7": "0x02004000",
-        "F8": "0x02004100",
-        "F9": "0x02004200",
-        "F10": "0x02004300",
-        "F11": "0x02004400",
-        "F12": "0x02004500",
-
-        "PrintScreen": "0x02004600",
-        "ScrollLock": "0x02004700",
-        "Pause": "0x02004800",
-
-        "BackTick": "0x02003500",
-        "1": "0x02001E00",
-        "2": "0x02001F00",
-        "3": "0x02002000",
-        "4": "0x02002100",
-        "5": "0x02002200",
-        "6": "0x02002300",
-        "7": "0x02002400",
-        "8": "0x02002500",
-        "9": "0x02002600",
-        "0": "0x02002700",
-        "Subtract": "0x02002D00",
-        "Add": "0x02002E00",
-        "Backspace": "0x02002A00",
-
-        "Insert": "0x02004900",
-        "Home": "0x02004A00",
-        "PageUp": "0x02004B00",
-
-        "Tab": "0x02002B00",
-        "Q": "0x02001400",
-        "W": "0x02001A00",
-        "E": "0x02000800",
-        "R": "0x02001500",
-        "T": "0x02001700",
-        "Y": "0x02001C00",
-        "U": "0x02001800",
-        "I": "0x02000C00",
-        "O": "0x02001200",
-        "P": "0x02001300",
-        "OpenSquareBrace": "0x02002F00",
-        "CloseSquareBrace": "0x02003000",
-        "Backslash": "0x02003100",
-        "Backslash1": "0x02003200",
-
-        "Delete": "0x02004C00",
-        "End": "0x02004D00",
-        "PageDown": "0x02004E00",
-
-        "CapsLock": "0x02003900",
-        "A": "0x02000400",
-        "S": "0x02001600",
-        "D": "0x02000700",
-        "F": "0x02000900",
-        "G": "0x02000A00",
-        "H": "0x02000B00",
-        "J": "0x02000D00",
-        "K": "0x02000E00",
-        "L": "0x02000F00",
-        "Semicolon": "0x02003300",
-        "Quotes": "0x02003400",
-        "Enter": "0x02002800",
-        "LShift": "0x02000002",
-        "AltBackslash": "0x02006400",
-        "Z": "0x02001D00",
-        "X": "0x02001B00",
-        "C": "0x02000600",
-        "V": "0x02001900",
-        "B": "0x02000500",
-        "N": "0x02001100",
-        "M": "0x02001000",
-        "Comma": "0x02003600",
-        "Period": "0x02003700",
-        "Slash": "0x02003800",
-        "RShift": "0x02000020",
-        "Up": "0x02005200",
-        "LCtrl": "0x02000001",
-        "LWin": "0x02000008",
-        "LAlt": "0x02000004",
-        "Space": "0x02002C00",
-        "RAlt": "0x02000040",
-        "RWin": "0x02000080",
-        "Menu": "0x02006500",
-        "RCtrl": "0x02000010",
-        "Left": "0x02005000",
-        "Down": "0x02005100",
-        "Right": "0x02004F00",
-
-        "NumLock": "0x02005300",
-        "NumPadSlash": "0x02005400",
-        "NumPadAsterisk": "0x02005500",
-        "NumPadSubtract": "0x02005600",
-        "NumPad7": "0x02005F00",
-        "NumPad8": "0x02006000",
-        "NumPad9": "0x02006100",
-        "NumPadAdd": "0x02005700",
-        "NumPad4": "0x02005C00",
-        "NumPad5": "0x02005D00",
-        "NumPad6": "0x02005E00",
-        "NumPad1": "0x02005900",
-        "NumPad2": "0x02005A00",
-        "NumPad3": "0x02005B00",
-        "NumPad0": "0x02006200",
-        "NumPadPeriod": "0x02006300",
-        "NumPadEnter": "0x02005800",
-
-        "OpenMediaPlayer": "0x03000183",
-        "MediaPlayPause": "0x030000CD",
-        "MediaStop": "0x030000B7",
-        "MediaPrevious": "0x030000B6",
-        "MediaNext": "0x030000B5",
-        "VolumeUp": "0x030000E9",
-        "VolumeDown": "0x030000EA",
-        "VolumeMute": "0x030000E2",
-
-        "BrowserSearch": "0x03000221",
-        "BrowserStop": "0x03000226",
-        "BrowserBack": "0x03000224",
-        "BrowserForward": "0x03000225",
-        "BrowserRefresh": "0x03000227",
-        "BrowserFavorites": "0x0300022A",
-        "BrowserHome": "0x03000223",
-        "OpenEmail": "0x0300018A",
-        "OpenMyComputer": "0x03000194",
-        "OpenCalculator": "0x03000192",
-        "Copy": "0x02000601",
-        "Paste": "0x02001901",
-        "Screenshot": "0x02004600",
-
-        "MouseLClick": "0x01010001",
-        "MouseRClick": "0x01010002",
-        "MouseMClick": "0x01010004",
-        "MouseBack": "0x01010008",
-        "MouseAdvance": "0x01010010",
-
-        "TempSwitchLayerBase": "0x0a070001",
-        "TempSwitchLayer1": "0x0a070002",
-        "TempSwitchLayer2": "0x0a070003",
-        "TempSwitchLayer3": "0x0a070004",
-        "TempSwitchLayerDriver": "0x0a070005",
-
-        "Power": "0x02006600",
-        "Clear": "0x02006700",
-        "F13": "0x02006800",
-        "F14": "0x02006900",
-        "F15": "0x02006A00",
-        "F16": "0x02006B00",
-        "F17": "0x02006C00",
-        "F18": "0x02006D00",
-        "F19": "0x02006E00",
-        "F20": "0x02006F00",
-        "F21": "0x02007000",
-        "F22": "0x02007100",
-        "F23": "0x02007200",
-        "F24": "0x02007300",
-        "NumPadComma": "0x02008500",
-        "IntlRo": "0x02008700",
-        "KanaMode": "0x02008800",
-        "IntlYen": "0x02008900",
-        "Convert": "0x02008A00",
-        "NonConvert": "0x02008B00",
-
-        "Lang3": "0x02009200",
-        "Lang4": "0x02009300",
-
-        "ToggleLockWindowsKey": "0x0A020002",
-        "ToggleBluetooth": "0x0A020007",
-        "ToggleBluetoothNoLED": "0x0A020008",
-
-        "DriverLayerButton": "0x0A060001",
-        "Layer1Button": "0x0A060002",
-        "Layer2Button": "0x0A060003",
-        "Layer3Button": "0x0A060004",
-
-        "NextLightingEffect": "0x09010010",
-        "NextReactiveLightingEffect": "0x09010011",
-        "BrightnessUp": "0x09020001",
-        "BrightnessDown": "0x09020002",
-        "LightingSpeedDecrease": "0x09030002",
-        "LightingSpeedIncrease": "0x09030001",
-        "LightingPauseResume": "0x09060001",
-        "ToggleLighting": "0x09060002"
-    }
     layerCodes = {
-        "Layer1": "0x23",
-        "layer2": "0x24",
-        "Layer3": "0x25",
-        "FnLayer1": "0x23",
-        "Fnlayer2": "0x24",
-        "FnLayer3": "0x25"
+        "Layer1": {
+            "code": KeyboardLayer.Layer1.value,
+            "isFnLayer": False
+        },
+        "Layer2": {
+            "code": KeyboardLayer.Layer2.value,
+            "isFnLayer": False
+        },
+        "Layer3": {
+            "code": KeyboardLayer.Layer3.value,
+            "isFnLayer": False
+        },
+        "FnLayer1": {
+            "code": KeyboardLayer.Layer1.value,
+            "isFnLayer": True
+        },
+        "FnLayer2": {
+            "code": KeyboardLayer.Layer2.value,
+            "isFnLayer": True
+        },
+        "FnLayer3": {
+            "code": KeyboardLayer.Layer3.value,
+            "isFnLayer": True
+        }
     }
 
     def __init__(self):
-        GK64.__init__(self)
+        logger.debug("DK61: init called")
+        self.hidDevice = self.findDevice(self.VendorId, self.ProductId, 1)
+        self.loadKeyboardMappings()
 
-    def setLayer(self):
-        pass
+    def __enter__(self):
+        if self.hidDevice is not None:
+            logger.debug("Hey, we have a HID device")
+            self.hidDevice.__enter__()
+        return self
 
-    def setColor(self):
-        pass
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        logger.debug("DK61: exit called")
+        if self.hidDevice is not None:
+            self.hidDevice.__exit__(exc_type, exc_val, exc_tb)
 
-    def wipeoutLayer(self, layercode):
-        pass
+    def loadKeyboardMappings(self):
+        global logger
+        with open("keyboard-mappings.json", "r") as f:
+            self.keyboardMappings = json.load(f)
+            self.mapKeycodes = self.keyboardMappings["mapKeycodes"]
+            self.keyboardKeys = self.keyboardMappings["keyboardKeys"]
+        return self.keyboardMappings
+
+    def findDevice(self, vendorId, productId, interfaceNumber):
+        allHIDDevices = hid.enumerate()
+        for oneDevice in allHIDDevices:
+            if oneDevice["vendor_id"] == vendorId and oneDevice["product_id"] == productId and \
+                    oneDevice["interface_number"] == interfaceNumber:
+                path = oneDevice["path"]
+                logger.debug("-------------------------------------------------------------------------------------------")
+                logger.debug("Found device with path: %s" % path)
+                logger.debug(pp.pformat(oneDevice))
+                return hid.Device(path=path)
+        return None
+
+    def sendCommand(self, cmd, subcmd, offset=0, length=0, data=None, getreply=True, verbose=False, replytimeout=100, smallOffset=False):
+        if offset & 0xff000000:
+            raise ValueError("offset {:#010x} > 0x00ffffff".format(offset))
+        if not data:
+            data = bytearray(0x38)
+        if smallOffset:
+            pkt = CommandPacket(cmd, subcmd, offset & 0xffff, length, 0, 0, data)._replace_checksum()
+        else:
+            pkt = CommandPacket(cmd, subcmd, offset & 0xffff, offset >> 16, length, 0, data)._replace_checksum()
+        if verbose:
+            print("send packet:")
+            print(pkt._hexdump())
+        self.hidDevice.write(pkt._pack())
+        if not getreply:
+            return
+        r = ReplyPacket._unpack(self.hidDevice.read(0x40, timeout=replytimeout))
+        if verbose:
+            print("recv reply:")
+            print(r._hexdump())
+        return r
 
     def setAllLayers(self, keymap):
         global logger
-        for layerName, layerKeymap in keymap["layers"].items():
+        for layerName, layerKeymap in keymap["keyLayers"].items():
             # first check that all keys inside the layer are valid
+            logger.debug("-----------------------------------------------------------------------------------------")
+            logger.debug("Set layer %s" % layerName)
             layercode = 0
-            self.wipeoutLayer(layercode)
-            for srcKey, dstKey in layerKeymap.items():
-                if not srcKey in self.mapKeycodes:
-                    raise LookupError("Source Keyname is wrong: %s inside %s" % (srcKey, layerName))
-                if not dstKey in self.mapKeycodes:
-                    raise LookupError("Destination Keyname is wrong: %s inside %s" % (dstKey, layerName))
+            for srcKeyName, dstKeyName in layerKeymap.items():
+                if not srcKeyName in self.mapKeycodes:
+                    raise LookupError("Source Keyname is wrong: %s inside %s" % (srcKeyName, layerName))
+                if not dstKeyName in self.mapKeycodes:
+                    raise LookupError("Destination Keyname is wrong: %s inside %s" % (dstKeyName, layerName))
+            driverKeycodes = []
+            unusedKeyCode = int(self.mapKeycodes["UnusedKey"], 0)
+            for key in self.keyboardKeys:
+                keyName = key["KeyName"]
+                if keyName in layerKeymap:
+                    dstKeyName = layerKeymap[keyName]
+                    keyCode = int(self.mapKeycodes[dstKeyName], 0)
+                else:
+                    keyCode = unusedKeyCode
+                # logger.debug("Use %d as keycode for %s" % (keyCode, keyName))
+                driverKeycodes.append(keyCode)
+            layerCodeInfo = self.layerCodes[layerName]
+            layerCode = layerCodeInfo["code"]
+            logger.debug("Set keycodes for %s" % layerName)
+            if layerCodeInfo["isFnLayer"]:
+                self.wipeoutLayer(layerCode, KeyboardLayerDataType.FnKeySet.value)
+                self.commandLayerFnSetKeyValues(layerCode, driverKeycodes)
+            else:
+                self.wipeoutLayer(layerCode, KeyboardLayerDataType.KeySet.value)
+                self.commandLayerSetKeyValues(layerCode, driverKeycodes)
 
-    def commandInfo(self):
-        pass
+    def getColorDefinition(self, colorDefinitions, colorName):
+        if colorName is not None and colorName in colorDefinitions:
+            return int(colorDefinitions[colorName], 0)
+        if "default" in colorDefinitions:
+            return int(colorDefinitions["default"], 0)
+        return 0x000000
 
-    def commandLayerSetKeyValues(self):
-        pass
+    def setStaticColorLayers(self, keymap):
+        global logger
+        colorDefinitions = keymap["colorDefinitions"]
+        for layerName, layerColorMap in keymap["staticColorLayers"].items():
+            defaultColorName = layerColorMap["default"] if "default" in layerColorMap else None
+            defaultColor = self.getColorDefinition(colorDefinitions, defaultColorName)
+            driverColorCodes = []
+            numKeys = 132
+            for i in range(0, numKeys):
+                driverColorCodes.append(defaultColor)
+            for key in self.keyboardKeys:
+                keyName = key["KeyName"]
+                if keyName in layerColorMap:
+                    colorCode = self.getColorDefinition(colorDefinitions, layerColorMap[keyName])
+                    locationCode = key["LocationCode"]
+                    driverColorCodes[locationCode] = colorCode
+            layerCodeInfo = self.layerCodes[layerName]
+            layerCode = layerCodeInfo["code"]
+            logger.debug("Set static light for layer %s with code %d and %d keys" % (layerName, layerCode, len(driverColorCodes)))
+            try:
+                self.wipeoutLayer(layerCode, KeyboardLayerDataType.Lighting.value)
+            except:
+                logger.debug("Ignoring error: no reply")
+            self.commandLayerSetStaticLighting(layerCode, driverColorCodes)
 
-    def commandLayerFnSetKeyValues(self):
-        pass
+    def write32Bits(self, data, position, value):
+        data[position + 0] = value & 0xff
+        data[position + 1] = (value >> 8) & 0xff
+        data[position + 2] = (value >> 16) & 0xff
+        data[position + 3] = (value >> 24) & 0xff
+
+    def write16Bits(self, data, position, value):
+        data[position + 0] = value & 0xff
+        data[position + 1] = (value >> 8) & 0xff
+
+    def commandLayerSetStaticLighting(self, layerCode, driverColorCodes):
+        maxNumberOfEffects = 32
+        effectHeaderSize = 16
+        totalEffectsHeaderSize = maxNumberOfEffects * effectHeaderSize
+        logger.debug("Total Effects Header Size is: %d" % totalEffectsHeaderSize)
+        numKeys = 132  # or better len(driverColorCodes)
+        driverColorCodesSize = numKeys * 4
+        paramHeaderSize = 4
+        dataBufferSize = totalEffectsHeaderSize + (paramHeaderSize + driverColorCodesSize)
+
+        # fill the buffer with data
+        data = bytearray(dataBufferSize)
+
+        # fill the header for static lighting, pointing to the start of static lighting array
+        self.write32Bits(data, 0, totalEffectsHeaderSize)  # start of effect data
+        self.write32Bits(data, 4, 1)  # effect params
+        self.write32Bits(data, 8, 0)
+        self.write32Bits(data, 12, 0)
+
+        for i in range(1, maxNumberOfEffects):
+            self.write32Bits(data, i * effectHeaderSize + 0, -1)  # unused effects
+            self.write32Bits(data, i * effectHeaderSize + 4, -1)
+            self.write32Bits(data, i * effectHeaderSize + 8, -1)
+            self.write32Bits(data, i * effectHeaderSize + 12, -1)
+
+        # local header
+        logger.debug("DriverColorCodes has size: %d" % driverColorCodesSize)
+        typeStatic = 0
+        self.write16Bits(data, totalEffectsHeaderSize, typeStatic)
+        self.write16Bits(data, totalEffectsHeaderSize + 2, driverColorCodesSize)
+
+        colorCodePosition = totalEffectsHeaderSize + paramHeaderSize
+        for colorCode in driverColorCodes:
+            self.write32Bits(data, colorCodePosition, colorCode)
+            colorCodePosition += 4
+
+        # now chunk the data buffer in smaller packets
+        maxChunkSize = 0x38
+        offset = 0
+        packetNumber = 0
+        while offset < dataBufferSize:
+            chunkSize = min(maxChunkSize, dataBufferSize - offset)
+            packetData = data[offset:offset + chunkSize]
+            logger.debug("Send packet %d at offset: %d" % (packetNumber, offset))
+            result = self.sendCommand(OpCodes.LayerSetLightValues.value, layerCode, offset, chunkSize, packetData, True, True, 1000)
+            if result.cmd != OpCodes.LayerSetLightValues.value:
+                raise Error("Error returned")
+            offset += chunkSize
+            packetNumber += 1
+
+    def commandCommonLayerSetKeyValues(self, opcode, layerCode, driverKeycodes):
+        offset = 0
+        driverKeycodesSize = len(driverKeycodes)
+        driverKeycodesCounter = 0
+        while driverKeycodesCounter < driverKeycodesSize:
+            keyBufferSize = 14 * 4
+            data = bytearray(keyBufferSize)
+            keyBufferCounter = 0
+            while keyBufferCounter < keyBufferSize and driverKeycodesCounter < driverKeycodesSize:
+                keycode = driverKeycodes[driverKeycodesCounter]
+                driverKeycodesCounter += 1
+                self.write32Bits(data, keyBufferCounter, keycode)
+                keyBufferCounter += 4
+            result = self.sendCommand(opcode, layerCode, offset, keyBufferCounter, data, True, True, 100, True)
+            if result.cmd != opcode:
+                raise Error("Error returned")
+            offset += keyBufferCounter
+
+    def commandLayerSetKeyValues(self, layerCode, driverKeycodes):
+        self.commandCommonLayerSetKeyValues(OpCodes.LayerSetKeyValues.value, layerCode, driverKeycodes)
+
+    def commandLayerFnSetKeyValues(self, layerCode, driverKeycodes):
+        self.commandCommonLayerSetKeyValues(OpCodes.LayerFnSetKeyValues.value, layerCode, driverKeycodes)
+
+    def wipeoutLayer(self, layerCode, dataType, getreply=True):
+        self.sendCommand(OpCodes.LayerResetDataType.value, layerCode, dataType, 0, None, getreply, True, 1000)
 
     def commandLayerSetLightValues(self):
         pass
@@ -288,8 +460,20 @@ class DK61(GK64):
     def commandLayerResetDataType(self):
         pass
 
+    def commandInfoGetBufferSize(self):
+        global logger
+        global pp
+        result = self.sendCommand(OpCodes.Info.value, 0x09, verbose=True)
+        size = (result.data[0], result.data[1])
+        logger.debug("Received size tuple: %s" % pp.pformat(size))
+        return size
+
+    def commandSetActiveLayer(self, layerCode):
+        self.sendCommand(OpCodes.SetLayer.value, layerCode, verbose=True)
+
     def test(self):
-        self.send_cmd(OpCodes.SetLayer.value, KeyboardLayer.Layer3.value, verbose=True)
+        self.commandInfoGetBufferSize()
+        self.commandSetActiveLayer(KeyboardLayer.Layer3.value)
 
 
 def parseCommandLineArguments():
@@ -301,8 +485,9 @@ def parseCommandLineArguments():
 
 def checkKeymapFile(keymapFilename):
     global logger
-    keymap = json.load(open(keymapFilename, "r"))
-    for key, value in keymap["layers"].items():
+    with open(keymapFilename, "r") as keymapFile:
+        keymap = json.load(keymapFile)
+    for key, value in keymap["keyLayers"].items():
         logger.debug("Analyze layer: %s" % key)
     return keymap
 
@@ -314,9 +499,9 @@ def main(args):
     logger.info("Hello world")
     logger.debug("Reading from file: %s" % args.keymap)
     keymap = checkKeymapFile(args.keymap)
-    dk61 = DK61()
-    dk61.test()
-    # dk61.setAllLayers(keymap)
+    with DK61() as dk61:
+        dk61.setStaticColorLayers(keymap)
+        # dk61.setAllLayers(keymap)
 
 
 if __name__ == "__main__":

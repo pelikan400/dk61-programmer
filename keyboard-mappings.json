@@ -1,0 +1,652 @@
+{
+    "keyboardKeys":
+    [
+        {
+            "KeyName": "Fn",
+            "Show": "Fn",
+            "LogicCode": 0,
+            "LocationCode": 124
+        },
+        {
+            "KeyName": "Menu",
+            "Show": "Menu",
+            "LogicCode": 1,
+            "LocationCode": 121
+        },
+        {
+            "KeyName": "LCtrl",
+            "Show": "Ctrl",
+            "LogicCode": 2,
+            "LocationCode": 110
+        },
+        {
+            "KeyName": "LShift",
+            "Show": "Shift",
+            "LogicCode": 3,
+            "LocationCode": 88
+        },
+        {
+            "KeyName": "LAlt",
+            "Show": "Alt",
+            "LogicCode": 4,
+            "LocationCode": 112
+        },
+        {
+            "KeyName": "LWin",
+            "Show": "Win",
+            "LogicCode": 5,
+            "LocationCode": 111
+        },
+        {
+            "KeyName": "RCtrl",
+            "Show": "Ctrl",
+            "LogicCode": 6,
+            "LocationCode": 122
+        },
+        {
+            "KeyName": "RShift",
+            "Show": "Shift",
+            "LogicCode": 7,
+            "LocationCode": 102
+        },
+        {
+            "KeyName": "RAlt",
+            "Show": "Alt",
+            "LogicCode": 8,
+            "LocationCode": 120
+        },
+        {
+            "KeyName": "DummyPlaceholder1",
+            "Show": "DummyPlaceholder1",
+            "LogicCode": 9,
+            "LocationCode": 120
+        },
+        {
+            "KeyName": "A",
+            "Show": "A",
+            "LogicCode": 10,
+            "LocationCode": 67
+        },
+        {
+            "KeyName": "B",
+            "Show": "B",
+            "LogicCode": 11,
+            "LocationCode": 94
+        },
+        {
+            "KeyName": "C",
+            "Show": "C",
+            "LogicCode": 12,
+            "LocationCode": 92
+        },
+        {
+            "KeyName": "D",
+            "Show": "D",
+            "LogicCode": 13,
+            "LocationCode": 69
+        },
+        {
+            "KeyName": "E",
+            "Show": "E",
+            "LogicCode": 14,
+            "LocationCode": 47
+        },
+        {
+            "KeyName": "F",
+            "Show": "F",
+            "LogicCode": 15,
+            "LocationCode": 70
+        },
+        {
+            "KeyName": "G",
+            "Show": "G",
+            "LogicCode": 16,
+            "LocationCode": 71
+        },
+        {
+            "KeyName": "H",
+            "Show": "H",
+            "LogicCode": 17,
+            "LocationCode": 72
+        },
+        {
+            "KeyName": "I",
+            "Show": "I",
+            "LogicCode": 18,
+            "LocationCode": 52
+        },
+        {
+            "KeyName": "J",
+            "Show": "J",
+            "LogicCode": 19,
+            "LocationCode": 73
+        },
+        {
+            "KeyName": "K",
+            "Show": "K",
+            "LogicCode": 20,
+            "LocationCode": 74
+        },
+        {
+            "KeyName": "L",
+            "Show": "L",
+            "LogicCode": 21,
+            "LocationCode": 75
+        },
+        {
+            "KeyName": "M",
+            "Show": "M",
+            "LogicCode": 22,
+            "LocationCode": 96
+        },
+        {
+            "KeyName": "N",
+            "Show": "N",
+            "LogicCode": 23,
+            "LocationCode": 95
+        },
+        {
+            "KeyName": "O",
+            "Show": "O",
+            "LogicCode": 24,
+            "LocationCode": 53
+        },
+        {
+            "KeyName": "P",
+            "Show": "P",
+            "LogicCode": 25,
+            "LocationCode": 54
+        },
+        {
+            "KeyName": "Q",
+            "Show": "Q",
+            "LogicCode": 26,
+            "LocationCode": 45
+        },
+        {
+            "KeyName": "R",
+            "Show": "R",
+            "LogicCode": 27,
+            "LocationCode": 48
+        },
+        {
+            "KeyName": "S",
+            "Show": "S",
+            "LogicCode": 28,
+            "LocationCode": 68
+        },
+        {
+            "KeyName": "T",
+            "Show": "T",
+            "LogicCode": 29,
+            "LocationCode": 49
+        },
+        {
+            "KeyName": "U",
+            "Show": "U",
+            "LogicCode": 30,
+            "LocationCode": 51,
+            "Position": {
+                "Left": 568,
+                "Top": 220,
+                "Width": 50,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "V",
+            "Show": "V",
+            "LogicCode": 31,
+            "LocationCode": 93
+        },
+        {
+            "KeyName": "W",
+            "Show": "W",
+            "LogicCode": 32,
+            "LocationCode": 46
+        },
+        {
+            "KeyName": "X",
+            "Show": "X",
+            "LogicCode": 33,
+            "LocationCode": 91
+        },
+        {
+            "KeyName": "Y",
+            "Show": "Y",
+            "LogicCode": 34,
+            "LocationCode": 50
+        },
+        {
+            "KeyName": "Z",
+            "Show": "Z",
+            "LogicCode": 35,
+            "LocationCode": 90
+        },
+        {
+            "KeyName": "1",
+            "Show": "1",
+            "LogicCode": 36,
+            "LocationCode": 23
+        },
+        {
+            "KeyName": "2",
+            "Show": "2",
+            "LogicCode": 37,
+            "LocationCode": 24
+        },
+        {
+            "KeyName": "3",
+            "Show": "3",
+            "LogicCode": 38,
+            "LocationCode": 25
+        },
+        {
+            "KeyName": "4",
+            "Show": "4",
+            "LogicCode": 39,
+            "LocationCode": 26
+        },
+        {
+            "KeyName": "5",
+            "Show": "5",
+            "LogicCode": 40,
+            "LocationCode": 27
+        },
+        {
+            "KeyName": "6",
+            "Show": "6",
+            "LogicCode": 41,
+            "LocationCode": 28
+        },
+        {
+            "KeyName": "7",
+            "Show": "7",
+            "LogicCode": 42,
+            "LocationCode": 29
+        },
+        {
+            "KeyName": "8",
+            "Show": "8",
+            "LogicCode": 43,
+            "LocationCode": 30
+        },
+        {
+            "KeyName": "9",
+            "Show": "9",
+            "LogicCode": 44,
+            "LocationCode": 31
+        },
+        {
+            "KeyName": "0",
+            "Show": "0",
+            "LogicCode": 45,
+            "LocationCode": 32
+        },
+        {
+            "KeyName": "Enter",
+            "Show": "Enter",
+            "LogicCode": 46,
+            "LocationCode": 79
+        },
+        {
+            "KeyName": "Esc",
+            "Show": "Esc",
+            "LogicCode": 47,
+            "LocationCode": 22
+        },
+        {
+            "KeyName": "Backspace",
+            "Show": "←",
+            "LogicCode": 48,
+            "LocationCode": 36,
+            "Position": {
+                "Left": 862,
+                "Top": 162,
+                "Width": 104,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Tab",
+            "Show": "Tab",
+            "LogicCode": 49,
+            "LocationCode": 44,
+            "Position": {
+                "Left": 160,
+                "Top": 220,
+                "Width": 80,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Space",
+            "Show": "Space",
+            "LogicCode": 50,
+            "LocationCode": 116
+        },
+        {
+            "KeyName": "Subtract",
+            "Show": "-",
+            "LogicCode": 51,
+            "LocationCode": 33
+        },
+        {
+            "KeyName": "Equal",
+            "Show": "=",
+            "LogicCode": 52,
+            "LocationCode": 34
+        },
+        {
+            "KeyName": "OpenSquareBrace",
+            "Show": "[",
+            "LogicCode": 53,
+            "LocationCode": 55
+        },
+        {
+            "KeyName": "CloseSquareBrace",
+            "Show": "]",
+            "LogicCode": 54,
+            "LocationCode": 56,
+            "Position": {
+                "Left": 838,
+                "Top": 220,
+                "Width": 50,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Backslash",
+            "Show": "|",
+            "LogicCode": 55,
+            "LocationCode": 58,
+            "Position": {
+                "Left": 892,
+                "Top": 220,
+                "Width": 74,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Semicolon",
+            "Show": ";",
+            "LogicCode": 56,
+            "LocationCode": 76,
+            "Position": {
+                "Left": 742,
+                "Top": 276,
+                "Width": 50,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Quotes",
+            "Show": "'",
+            "LogicCode": 57,
+            "LocationCode": 77,
+            "Position": {
+                "Left": 796,
+                "Top": 276,
+                "Width": 50,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "DummyPlaceholder2",
+            "Show": "DummyPlaceholder2",
+            "LogicCode": 58,
+            "LocationCode": 120,
+            "Position": {
+                "Left": 698,
+                "Top": 386,
+                "Width": 64,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Comma",
+            "Show": ",",
+            "LogicCode": 59,
+            "LocationCode": 97,
+            "Position": {
+                "Left": 660,
+                "Top": 332,
+                "Width": 50,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Period",
+            "Show": ".",
+            "LogicCode": 60,
+            "LocationCode": 98,
+            "Position": {
+                "Left": 714,
+                "Top": 332,
+                "Width": 50,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "Slash",
+            "Show": "/",
+            "LogicCode": 61,
+            "LocationCode": 99,
+            "Position": {
+                "Left": 768,
+                "Top": 332,
+                "Width": 50,
+                "Height": 50
+            }
+        },
+        {
+            "KeyName": "CapsLock",
+            "Show": "Caps L",
+            "LogicCode": 62,
+            "LocationCode": 66,
+            "Position": {
+                "Left": 160,
+                "Top": 276,
+                "Width": 90,
+                "Height": 50
+            }
+        }
+    ],
+    "mapKeycodes": {
+        "None": "0",
+        "UnusedKey": "0xFFFFFFFF",
+
+        "Esc": "0x02002900",
+        "Disabled": "0x02000000",
+        "F1": "0x02003A00",
+        "F2": "0x02003B00",
+        "F3": "0x02003C00",
+        "F4": "0x02003D00",
+        "F5": "0x02003E00",
+        "F6": "0x02003F00",
+        "F7": "0x02004000",
+        "F8": "0x02004100",
+        "F9": "0x02004200",
+        "F10": "0x02004300",
+        "F11": "0x02004400",
+        "F12": "0x02004500",
+
+        "PrintScreen": "0x02004600",
+        "ScrollLock": "0x02004700",
+        "Pause": "0x02004800",
+
+        "BackTick": "0x02003500",
+        "1": "0x02001E00",
+        "2": "0x02001F00",
+        "3": "0x02002000",
+        "4": "0x02002100",
+        "5": "0x02002200",
+        "6": "0x02002300",
+        "7": "0x02002400",
+        "8": "0x02002500",
+        "9": "0x02002600",
+        "0": "0x02002700",
+        "Subtract": "0x02002D00",
+        "Equal": "0x02002E00",
+        "Backspace": "0x02002A00",
+
+        "Insert": "0x02004900",
+        "Home": "0x02004A00",
+        "PageUp": "0x02004B00",
+
+        "Tab": "0x02002B00",
+        "Q": "0x02001400",
+        "W": "0x02001A00",
+        "E": "0x02000800",
+        "R": "0x02001500",
+        "T": "0x02001700",
+        "Y": "0x02001C00",
+        "U": "0x02001800",
+        "I": "0x02000C00",
+        "O": "0x02001200",
+        "P": "0x02001300",
+        "OpenSquareBrace": "0x02002F00",
+        "CloseSquareBrace": "0x02003000",
+        "Backslash": "0x02003100",
+        "Backslash1": "0x02003200",
+
+        "Delete": "0x02004C00",
+        "End": "0x02004D00",
+        "PageDown": "0x02004E00",
+
+        "CapsLock": "0x02003900",
+        "A": "0x02000400",
+        "S": "0x02001600",
+        "D": "0x02000700",
+        "F": "0x02000900",
+        "G": "0x02000A00",
+        "H": "0x02000B00",
+        "J": "0x02000D00",
+        "K": "0x02000E00",
+        "L": "0x02000F00",
+        "Semicolon": "0x02003300",
+        "Quotes": "0x02003400",
+        "Enter": "0x02002800",
+        "LShift": "0x02000002",
+        "AltBackslash": "0x02006400",
+        "Z": "0x02001D00",
+        "X": "0x02001B00",
+        "C": "0x02000600",
+        "V": "0x02001900",
+        "B": "0x02000500",
+        "N": "0x02001100",
+        "M": "0x02001000",
+        "Comma": "0x02003600",
+        "Period": "0x02003700",
+        "Slash": "0x02003800",
+        "RShift": "0x02000020",
+        "Up": "0x02005200",
+        "LCtrl": "0x02000001",
+        "LWin": "0x02000008",
+        "LAlt": "0x02000004",
+        "Space": "0x02002C00",
+        "RAlt": "0x02000040",
+        "RWin": "0x02000080",
+        "Menu": "0x02006500",
+        "RCtrl": "0x02000010",
+        "Left": "0x02005000",
+        "Down": "0x02005100",
+        "Right": "0x02004F00",
+
+        "NumLock": "0x02005300",
+        "NumPadSlash": "0x02005400",
+        "NumPadAsterisk": "0x02005500",
+        "NumPadSubtract": "0x02005600",
+        "NumPad7": "0x02005F00",
+        "NumPad8": "0x02006000",
+        "NumPad9": "0x02006100",
+        "NumPadAdd": "0x02005700",
+        "NumPad4": "0x02005C00",
+        "NumPad5": "0x02005D00",
+        "NumPad6": "0x02005E00",
+        "NumPad1": "0x02005900",
+        "NumPad2": "0x02005A00",
+        "NumPad3": "0x02005B00",
+        "NumPad0": "0x02006200",
+        "NumPadPeriod": "0x02006300",
+        "NumPadEnter": "0x02005800",
+
+        "OpenMediaPlayer": "0x03000183",
+        "MediaPlayPause": "0x030000CD",
+        "MediaStop": "0x030000B7",
+        "MediaPrevious": "0x030000B6",
+        "MediaNext": "0x030000B5",
+        "VolumeUp": "0x030000E9",
+        "VolumeDown": "0x030000EA",
+        "VolumeMute": "0x030000E2",
+
+        "BrowserSearch": "0x03000221",
+        "BrowserStop": "0x03000226",
+        "BrowserBack": "0x03000224",
+        "BrowserForward": "0x03000225",
+        "BrowserRefresh": "0x03000227",
+        "BrowserFavorites": "0x0300022A",
+        "BrowserHome": "0x03000223",
+        "OpenEmail": "0x0300018A",
+        "OpenMyComputer": "0x03000194",
+        "OpenCalculator": "0x03000192",
+        "Copy": "0x02000601",
+        "Paste": "0x02001901",
+        "Screenshot": "0x02004600",
+
+        "MouseLClick": "0x01010001",
+        "MouseRClick": "0x01010002",
+        "MouseMClick": "0x01010004",
+        "MouseBack": "0x01010008",
+        "MouseAdvance": "0x01010010",
+
+        "TempSwitchLayerBase": "0x0a070001",
+        "TempSwitchLayer1": "0x0a070002",
+        "TempSwitchLayer2": "0x0a070003",
+        "TempSwitchLayer3": "0x0a070004",
+        "TempSwitchLayerDriver": "0x0a070005",
+
+        "Power": "0x02006600",
+        "Clear": "0x02006700",
+        "F13": "0x02006800",
+        "F14": "0x02006900",
+        "F15": "0x02006A00",
+        "F16": "0x02006B00",
+        "F17": "0x02006C00",
+        "F18": "0x02006D00",
+        "F19": "0x02006E00",
+        "F20": "0x02006F00",
+        "F21": "0x02007000",
+        "F22": "0x02007100",
+        "F23": "0x02007200",
+        "F24": "0x02007300",
+        "NumPadComma": "0x02008500",
+        "IntlRo": "0x02008700",
+        "KanaMode": "0x02008800",
+        "IntlYen": "0x02008900",
+        "Convert": "0x02008A00",
+        "NonConvert": "0x02008B00",
+
+        "Lang3": "0x02009200",
+        "Lang4": "0x02009300",
+
+        "ToggleLockWindowsKey": "0x0A020002",
+        "ToggleBluetooth": "0x0A020007",
+        "ToggleBluetoothNoLED": "0x0A020008",
+
+        "DriverLayerButton": "0x0A060001",
+        "Layer1Button": "0x0A060002",
+        "Layer2Button": "0x0A060003",
+        "Layer3Button": "0x0A060004",
+
+        "NextLightingEffect": "0x09010010",
+        "NextReactiveLightingEffect": "0x09010011",
+        "BrightnessUp": "0x09020001",
+        "BrightnessDown": "0x09020002",
+        "LightingSpeedDecrease": "0x09030002",
+        "LightingSpeedIncrease": "0x09030001",
+        "LightingPauseResume": "0x09060001",
+        "ToggleLighting": "0x09060002"
+    }
+
+}
