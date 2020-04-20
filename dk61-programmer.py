@@ -356,7 +356,7 @@ class DK61(object):
                 keyName = key["KeyName"]
                 if keyName in layerColorMap:
                     colorCode = self.getColorDefinition(colorDefinitions, layerColorMap[keyName])
-                    locationCode = key["LocationCode"]
+                    locationCode = key["LocationLED"]
                     driverColorCodes[locationCode] = colorCode
             layerCodeInfo = self.layerCodes[layerName]
             layerCode = layerCodeInfo["code"]
@@ -484,8 +484,6 @@ def parseCommandLineArguments():
 def checkKeymapFile(keymapFilename):
     with open(keymapFilename, "r") as keymapFile:
         keymap = json.load(keymapFile)
-    for key, value in keymap["keyLayers"].items():
-        logger.debug("Analyze layer: %s" % key)
     return keymap
 
 
@@ -498,7 +496,7 @@ def main(args):
     keymap = checkKeymapFile(args.keymap)
     with DK61() as dk61:
         dk61.setStaticColorLayers(keymap)
-        # dk61.setAllLayers(keymap)
+        dk61.setAllLayers(keymap)
 
 
 if __name__ == "__main__":

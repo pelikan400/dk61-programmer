@@ -5,451 +5,442 @@
             "KeyName": "Fn",
             "Show": "Fn",
             "LogicCode": 0,
-            "LocationCode": 124
+            "LocationCode": 124,
+            "LocationLED": 60
         },
         {
             "KeyName": "Menu",
             "Show": "Menu",
             "LogicCode": 1,
-            "LocationCode": 121
+            "LocationCode": 121,
+            "LocationLED": 58
         },
         {
             "KeyName": "LCtrl",
             "Show": "Ctrl",
             "LogicCode": 2,
-            "LocationCode": 110
+            "LocationCode": 110,
+            "LocationLED": 53
         },
         {
             "KeyName": "LShift",
             "Show": "Shift",
             "LogicCode": 3,
-            "LocationCode": 88
+            "LocationCode": 88,
+            "LocationLED": 41
         },
         {
             "KeyName": "LAlt",
             "Show": "Alt",
             "LogicCode": 4,
-            "LocationCode": 112
+            "LocationCode": 112,
+            "LocationLED": 55
         },
         {
             "KeyName": "LWin",
             "Show": "Win",
             "LogicCode": 5,
-            "LocationCode": 111
+            "LocationCode": 111,
+            "LocationLED": 54
         },
         {
             "KeyName": "RCtrl",
             "Show": "Ctrl",
             "LogicCode": 6,
-            "LocationCode": 122
+            "LocationCode": 122,
+            "LocationLED": 59
         },
         {
             "KeyName": "RShift",
             "Show": "Shift",
             "LogicCode": 7,
-            "LocationCode": 102
+            "LocationCode": 102,
+            "LocationLED": 52
         },
         {
             "KeyName": "RAlt",
             "Show": "Alt",
             "LogicCode": 8,
-            "LocationCode": 120
+            "LocationCode": 120,
+            "LocationLED": 57
         },
         {
             "KeyName": "DummyPlaceholder1",
             "Show": "DummyPlaceholder1",
             "LogicCode": 9,
-            "LocationCode": 120
+            "LocationCode": 120,
+            "LocationLED": 120
         },
         {
             "KeyName": "A",
             "Show": "A",
             "LogicCode": 10,
-            "LocationCode": 67
+            "LocationCode": 67,
+            "LocationLED": 29
         },
         {
             "KeyName": "B",
             "Show": "B",
             "LogicCode": 11,
-            "LocationCode": 94
+            "LocationCode": 94,
+            "LocationLED": 46
         },
         {
             "KeyName": "C",
             "Show": "C",
             "LogicCode": 12,
-            "LocationCode": 92
+            "LocationCode": 92,
+            "LocationLED": 44
         },
         {
             "KeyName": "D",
             "Show": "D",
             "LogicCode": 13,
-            "LocationCode": 69
+            "LocationCode": 69,
+            "LocationLED": 31
         },
         {
             "KeyName": "E",
             "Show": "E",
             "LogicCode": 14,
-            "LocationCode": 47
+            "LocationCode": 47,
+            "LocationLED": 17
         },
         {
             "KeyName": "F",
             "Show": "F",
             "LogicCode": 15,
-            "LocationCode": 70
+            "LocationCode": 70,
+            "LocationLED": 32
         },
         {
             "KeyName": "G",
             "Show": "G",
             "LogicCode": 16,
-            "LocationCode": 71
+            "LocationCode": 71,
+            "LocationLED": 33
         },
         {
             "KeyName": "H",
             "Show": "H",
             "LogicCode": 17,
-            "LocationCode": 72
+            "LocationCode": 72,
+            "LocationLED": 34
         },
         {
             "KeyName": "I",
             "Show": "I",
             "LogicCode": 18,
-            "LocationCode": 52
+            "LocationCode": 52,
+            "LocationLED": 22
         },
         {
             "KeyName": "J",
             "Show": "J",
             "LogicCode": 19,
-            "LocationCode": 73
+            "LocationCode": 73,
+            "LocationLED": 35
         },
         {
             "KeyName": "K",
             "Show": "K",
             "LogicCode": 20,
-            "LocationCode": 74
+            "LocationCode": 74,
+            "LocationLED": 36
         },
         {
             "KeyName": "L",
             "Show": "L",
             "LogicCode": 21,
-            "LocationCode": 75
+            "LocationCode": 75,
+            "LocationLED": 37
         },
         {
             "KeyName": "M",
             "Show": "M",
             "LogicCode": 22,
-            "LocationCode": 96
+            "LocationCode": 96,
+            "LocationLED": 48
         },
         {
             "KeyName": "N",
             "Show": "N",
             "LogicCode": 23,
-            "LocationCode": 95
+            "LocationCode": 95,
+            "LocationLED": 47
         },
         {
             "KeyName": "O",
             "Show": "O",
             "LogicCode": 24,
-            "LocationCode": 53
+            "LocationCode": 53,
+            "LocationLED": 23
         },
         {
             "KeyName": "P",
             "Show": "P",
             "LogicCode": 25,
-            "LocationCode": 54
+            "LocationCode": 54,
+            "LocationLED": 24
         },
         {
             "KeyName": "Q",
             "Show": "Q",
             "LogicCode": 26,
-            "LocationCode": 45
+            "LocationCode": 45,
+            "LocationLED": 15
         },
         {
             "KeyName": "R",
             "Show": "R",
             "LogicCode": 27,
-            "LocationCode": 48
+            "LocationCode": 48,
+            "LocationLED": 18
         },
         {
             "KeyName": "S",
             "Show": "S",
             "LogicCode": 28,
-            "LocationCode": 68
+            "LocationCode": 68,
+            "LocationLED": 30
         },
         {
             "KeyName": "T",
             "Show": "T",
             "LogicCode": 29,
-            "LocationCode": 49
+            "LocationCode": 49,
+            "LocationLED": 19
         },
         {
             "KeyName": "U",
             "Show": "U",
             "LogicCode": 30,
             "LocationCode": 51,
-            "Position": {
-                "Left": 568,
-                "Top": 220,
-                "Width": 50,
-                "Height": 50
-            }
+            "LocationLED": 21
         },
         {
             "KeyName": "V",
             "Show": "V",
             "LogicCode": 31,
-            "LocationCode": 93
+            "LocationCode": 93,
+            "LocationLED": 45
         },
         {
             "KeyName": "W",
             "Show": "W",
             "LogicCode": 32,
-            "LocationCode": 46
+            "LocationCode": 46,
+            "LocationLED": 16
         },
         {
             "KeyName": "X",
             "Show": "X",
             "LogicCode": 33,
-            "LocationCode": 91
+            "LocationCode": 91,
+            "LocationLED": 43
         },
         {
             "KeyName": "Y",
             "Show": "Y",
             "LogicCode": 34,
-            "LocationCode": 50
+            "LocationCode": 50,
+            "LocationLED": 20
         },
         {
             "KeyName": "Z",
             "Show": "Z",
             "LogicCode": 35,
-            "LocationCode": 90
+            "LocationCode": 90,
+            "LocationLED": 42
         },
         {
             "KeyName": "1",
             "Show": "1",
             "LogicCode": 36,
-            "LocationCode": 23
+            "LocationCode": 23,
+            "LocationLED": 1
         },
         {
             "KeyName": "2",
             "Show": "2",
             "LogicCode": 37,
-            "LocationCode": 24
+            "LocationCode": 24,
+            "LocationLED": 2
         },
         {
             "KeyName": "3",
             "Show": "3",
             "LogicCode": 38,
-            "LocationCode": 25
+            "LocationCode": 25,
+            "LocationLED": 3
         },
         {
             "KeyName": "4",
             "Show": "4",
             "LogicCode": 39,
-            "LocationCode": 26
+            "LocationCode": 26,
+            "LocationLED": 4
         },
         {
             "KeyName": "5",
             "Show": "5",
             "LogicCode": 40,
-            "LocationCode": 27
+            "LocationCode": 27,
+            "LocationLED": 5
         },
         {
             "KeyName": "6",
             "Show": "6",
             "LogicCode": 41,
-            "LocationCode": 28
+            "LocationCode": 28,
+            "LocationLED": 6
         },
         {
             "KeyName": "7",
             "Show": "7",
             "LogicCode": 42,
-            "LocationCode": 29
+            "LocationCode": 29,
+            "LocationLED": 7
         },
         {
             "KeyName": "8",
             "Show": "8",
             "LogicCode": 43,
-            "LocationCode": 30
+            "LocationCode": 30,
+            "LocationLED": 8
         },
         {
             "KeyName": "9",
             "Show": "9",
             "LogicCode": 44,
-            "LocationCode": 31
+            "LocationCode": 31,
+            "LocationLED": 9
         },
         {
             "KeyName": "0",
             "Show": "0",
             "LogicCode": 45,
-            "LocationCode": 32
+            "LocationCode": 32,
+            "LocationLED": 10
         },
         {
             "KeyName": "Enter",
             "Show": "Enter",
             "LogicCode": 46,
-            "LocationCode": 79
+            "LocationCode": 79,
+            "LocationLED": 40
         },
         {
             "KeyName": "Esc",
             "Show": "Esc",
             "LogicCode": 47,
-            "LocationCode": 22
+            "LocationCode": 22,
+            "LocationLED": 0
         },
         {
             "KeyName": "Backspace",
             "Show": "←",
             "LogicCode": 48,
             "LocationCode": 36,
-            "Position": {
-                "Left": 862,
-                "Top": 162,
-                "Width": 104,
-                "Height": 50
-            }
+            "LocationLED": 13
         },
         {
             "KeyName": "Tab",
             "Show": "Tab",
             "LogicCode": 49,
             "LocationCode": 44,
-            "Position": {
-                "Left": 160,
-                "Top": 220,
-                "Width": 80,
-                "Height": 50
-            }
+            "LocationLED": 14
         },
         {
             "KeyName": "Space",
             "Show": "Space",
             "LogicCode": 50,
-            "LocationCode": 116
+            "LocationCode": 116,
+            "LocationLED": 56
         },
         {
             "KeyName": "Subtract",
             "Show": "-",
             "LogicCode": 51,
-            "LocationCode": 33
+            "LocationCode": 33,
+            "LocationLED": 11
         },
         {
             "KeyName": "Equal",
             "Show": "=",
             "LogicCode": 52,
-            "LocationCode": 34
+            "LocationCode": 34,
+            "LocationLED": 12
         },
         {
             "KeyName": "OpenSquareBrace",
             "Show": "[",
             "LogicCode": 53,
-            "LocationCode": 55
+            "LocationCode": 55,
+            "LocationLED": 25
         },
         {
             "KeyName": "CloseSquareBrace",
             "Show": "]",
             "LogicCode": 54,
             "LocationCode": 56,
-            "Position": {
-                "Left": 838,
-                "Top": 220,
-                "Width": 50,
-                "Height": 50
-            }
+            "LocationLED": 26
         },
         {
             "KeyName": "Backslash",
             "Show": "|",
             "LogicCode": 55,
             "LocationCode": 58,
-            "Position": {
-                "Left": 892,
-                "Top": 220,
-                "Width": 74,
-                "Height": 50
-            }
+            "LocationLED": 27
         },
         {
             "KeyName": "Semicolon",
             "Show": ";",
             "LogicCode": 56,
             "LocationCode": 76,
-            "Position": {
-                "Left": 742,
-                "Top": 276,
-                "Width": 50,
-                "Height": 50
-            }
+            "LocationLED": 38
         },
         {
             "KeyName": "Quotes",
             "Show": "'",
             "LogicCode": 57,
             "LocationCode": 77,
-            "Position": {
-                "Left": 796,
-                "Top": 276,
-                "Width": 50,
-                "Height": 50
-            }
+            "LocationLED": 39
         },
         {
             "KeyName": "DummyPlaceholder2",
             "Show": "DummyPlaceholder2",
             "LogicCode": 58,
             "LocationCode": 120,
-            "Position": {
-                "Left": 698,
-                "Top": 386,
-                "Width": 64,
-                "Height": 50
-            }
+            "LocationLED": 120
         },
         {
             "KeyName": "Comma",
             "Show": ",",
             "LogicCode": 59,
             "LocationCode": 97,
-            "Position": {
-                "Left": 660,
-                "Top": 332,
-                "Width": 50,
-                "Height": 50
-            }
+            "LocationLED": 49
         },
         {
             "KeyName": "Period",
             "Show": ".",
             "LogicCode": 60,
             "LocationCode": 98,
-            "Position": {
-                "Left": 714,
-                "Top": 332,
-                "Width": 50,
-                "Height": 50
-            }
+            "LocationLED": 50
         },
         {
             "KeyName": "Slash",
             "Show": "/",
             "LogicCode": 61,
             "LocationCode": 99,
-            "Position": {
-                "Left": 768,
-                "Top": 332,
-                "Width": 50,
-                "Height": 50
-            }
+            "LocationLED": 51
         },
         {
             "KeyName": "CapsLock",
             "Show": "Caps L",
             "LogicCode": 62,
             "LocationCode": 66,
-            "Position": {
-                "Left": 160,
-                "Top": 276,
-                "Width": 90,
-                "Height": 50
-            }
+            "LocationLED": 28
         }
     ],
     "mapKeycodes": {

@@ -13,20 +13,21 @@
   },
 
   "staticColorLayers": {
+    "Layer1": {
+      "default": "black",
+      "W": "blue"
+    },
     "Layer2": {
-      "default": "green",
+      "default": "black",
+      "E": "blue",
       "RAlt": "red",
       "Menu": "red",
       "RCtrl": "red",
-      "Slash": "red",
-      "3": "red",
-      "A": "red",
-      "Q": "red",
-      "Z": "red",
-      "Space": "red"
+      "Slash": "red"
     },
     "Layer3": {
-      "default": "blue",
+      "default": "black",
+      "R": "blue",
       "Slash": "red",
       "RAlt": "red",
       "Menu": "red",
