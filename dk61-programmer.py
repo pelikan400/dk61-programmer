@@ -36,11 +36,11 @@ def crc16(data, poly=0x1021, iv=0x0000, xorf=0x0000):
 
 
 def crc16_usb(data, iv=0xffff):
-    return crc16(data, poly=0x8005, iv=0xffff, xorf=0xffff)
+    return crc16(data, poly=0x8005, iv=iv, xorf=0xffff)
 
 
 def mycrc16(data, iv=0xffff):
-    return crc16(data, poly=0x1021, iv=0xffff, xorf=0x0000)
+    return crc16(data, poly=0x1021, iv=iv, xorf=0x0000)
 
 
 def hexdump_line(data):
@@ -159,17 +159,17 @@ class BImgHdr(BImgHdrTuple, BindataMixin):
 
 
 class Error(Exception):
-    '''Base class for exceptions in this module'''
+    """Base class for exceptions in this module"""
     pass
 
 
 class CmdError(Error):
-    '''Exception raised when the GK6x reply doesn't indicate success.
-
+    """Exception raised when the GK6x reply doesn't indicate success.
+ 
     Attributes:
         message: explanation of the error
         reply: the ReplyPacket object
-    '''
+    """
 
     def __init__(self, message, reply):
         self.message = message
@@ -246,6 +246,9 @@ class DK61(object):
     def __init__(self):
         logger.debug("DK61: init called")
         self.hidDevice = self.findDevice(self.VendorId, self.ProductId, 1)
+        self.keyboardMappings = None
+        self.mapKeycodes = None
+        self.keyboardKeys = None
         self.loadKeyboardMappings()
 
     def __enter__(self):
@@ -260,7 +263,6 @@ class DK61(object):
             self.hidDevice.__exit__(exc_type, exc_val, exc_tb)
 
     def loadKeyboardMappings(self):
-        global logger
         with open("keyboard-mappings.json", "r") as f:
             self.keyboardMappings = json.load(f)
             self.mapKeycodes = self.keyboardMappings["mapKeycodes"]
@@ -279,7 +281,8 @@ class DK61(object):
                 return hid.Device(path=path)
         return None
 
-    def sendCommand(self, cmd, subcmd, offset=0, length=0, data=None, getreply=True, verbose=False, replytimeout=100, smallOffset=False):
+    def sendCommand(self, cmd, subcmd, offset=0, length=0, data=None, getreply=True, verbose=False, replytimeout=100,
+                    smallOffset=False):
         if offset & 0xff000000:
             raise ValueError("offset {:#010x} > 0x00ffffff".format(offset))
         if not data:
@@ -301,7 +304,6 @@ class DK61(object):
         return r
 
     def setAllLayers(self, keymap):
-        global logger
         for layerName, layerKeymap in keymap["keyLayers"].items():
             # first check that all keys inside the layer are valid
             logger.debug("-----------------------------------------------------------------------------------------")
@@ -333,7 +335,8 @@ class DK61(object):
                 self.wipeoutLayer(layerCode, KeyboardLayerDataType.KeySet.value)
                 self.commandLayerSetKeyValues(layerCode, driverKeycodes)
 
-    def getColorDefinition(self, colorDefinitions, colorName):
+    @staticmethod
+    def getColorDefinition(colorDefinitions, colorName):
         if colorName is not None and colorName in colorDefinitions:
             return int(colorDefinitions[colorName], 0)
         if "default" in colorDefinitions:
@@ -341,7 +344,6 @@ class DK61(object):
         return 0x000000
 
     def setStaticColorLayers(self, keymap):
-        global logger
         colorDefinitions = keymap["colorDefinitions"]
         for layerName, layerColorMap in keymap["staticColorLayers"].items():
             defaultColorName = layerColorMap["default"] if "default" in layerColorMap else None
@@ -459,8 +461,6 @@ class DK61(object):
         pass
 
     def commandInfoGetBufferSize(self):
-        global logger
-        global pp
         result = self.sendCommand(OpCodes.Info.value, 0x09, verbose=True)
         size = (result.data[0], result.data[1])
         logger.debug("Received size tuple: %s" % pp.pformat(size))
@@ -482,7 +482,6 @@ def parseCommandLineArguments():
 
 
 def checkKeymapFile(keymapFilename):
-    global logger
     with open(keymapFilename, "r") as keymapFile:
         keymap = json.load(keymapFile)
     for key, value in keymap["keyLayers"].items():
@@ -503,5 +502,5 @@ def main(args):
 
 
 if __name__ == "__main__":
-    args = parseCommandLineArguments()
-    main(args)
+    parsedArgs = parseCommandLineArguments()
+    main(parsedArgs)

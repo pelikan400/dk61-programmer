@@ -1,39 +1,86 @@
 {
   "author": "Edmund Bayerle",
-  "notes": "Layer1 is the normal default layers with just Z and Y swapped, Layer2 has arrow keys on the right side with RAlt, /,Menu, RCtrl. Switching between Layer1 and Layer2 is with Fn+Enter Layer3 has also PgUp, PgDown on ] amd '",
+  "notes": "Layer1(W) is the normal default layers with just Z and Y swapped, Layer2(E) has arrow keys on the right side with RAlt, /,Menu, RCtrl. Layer3(R) is for surfing. Switching between Layer1 and Layer2 is with Fn+RShift. Layer3 has also PgUp, PgDown on ] amd '",
 
-  "colorCodes": {
-    "Layer1Color": "#0d0",
-    "Layer1Arrows": "#d00",
-    "Layer2Color": "#dd0",
-    "Layer3Color": "#00d"
+  "colorDefinitions": {
+    "white": "0xffffffff",
+    "black": "0xff000000",
+    "blue": "0xffff0000",
+    "red": "0xff0000ff",
+    "green": "0xff00ff00",
+    "orange": "0xff00ffff",
+    "default": "0xff004000"
   },
-  "layers" : {
-    "FnLayer1" : {
-      "Enter" : "Layer2Button"
-    },
+
+  "staticColorLayers": {
     "Layer2": {
       "default": "green",
+      "RAlt": "red",
+      "Menu": "red",
+      "RCtrl": "red",
+      "Slash": "red",
+      "3": "red",
+      "A": "red",
+      "Q": "red",
+      "Z": "red",
+      "Space": "red"
+    },
+    "Layer3": {
+      "default": "blue",
+      "Slash": "red",
+      "RAlt": "red",
+      "Menu": "red",
+      "RCtrl": "red",
+      "W": "red",
+      "A": "red",
+      "S": "red",
+      "D": "red",
+      "CloseSquareBrace": "red",
+      "Quotes": "red",
+      "0": "red",
+      "Subtract": "red",
+      "Equal": "red",
+      "F": "red",
+      "G": "red",
+      "H": "red"
+    }
+  },
+  "keyLayers" : {
+    "FnLayer1" : {
+      "Enter" : "Layer3Button",
+      "RShift": "Layer2Button"
+    },
+    "Layer2": {
       "RAlt": "Left",
       "Menu": "Down",
       "RCtrl": "Right",
       "Slash": "Up"
     },
+    "FnLayer2" : {
+      "Enter" : "Layer3Button",
+      "RShift": "Layer1Button"
+    },
     "Layer3": {
-      "default": "blue",
+      "Slash": "Up",
       "RAlt": "Left",
       "Menu": "Down",
       "RCtrl": "Right",
-      "Slash": "Up",
+      "W": "Up",
+      "A": "Left",
+      "S": "Down",
+      "D": "Right",
       "CloseSquareBrace": "PageUp",
       "Quotes": "PageDown",
-      "A": "B"
+      "0": "VolumeMute",
+      "Subtract": "VolumeDown",
+      "Equal": "VolumeUp",
+      "F": "VolumeMute",
+      "G": "VolumeDown",
+      "H": "VolumeUp"
     },
-    "FnLayer2": {
-      "Enter": "Layer1Button"
+    "FnLayer3" : {
+      "Enter" : "Layer2Button",
+      "RShift": "Layer1Button"
     }
-  },
-  "colors": {
-
   }
 }
