@@ -151,8 +151,6 @@ class ReplyPacket(ReplyPacketTuple, BindataMixin):
     _struct = PacketStruct
 
 
-# TODO: document the .bimg header format here!!
-
 BImgHdrTuple = namedtuple("BImgHdrTuple", "magic checksum ts size datachecksum itype name")
 
 
