@@ -47,17 +47,14 @@ def hexdump_line(data):
     linedata = bytearray(data[:16])
     hexbytes = ["%02x" % b for b in linedata] + (["  "] * (16 - len(linedata)))
     printable = ''.join(chr(b) if b >= 0x20 and b < 0x7f else '.' for b in linedata)
-    return '{}  {}   {} {}'.format(' '.join(hexbytes[:8]),
-                                   ' '.join(hexbytes[8:]),
-                                   printable[:8],
+    return '{}  {}   {} {}'.format(' '.join(hexbytes[:8]), ' '.join(hexbytes[8:]), printable[:8],
                                    printable[8:])
 
 
 def hexdump_iterlines(data, start=0):
     offset = 0
     while offset < len(data):
-        yield "{:08x}  {}".format(start + offset,
-                                  hexdump_line(data[offset:offset + 0x10]))
+        yield "{:08x}  {}".format(start + offset, hexdump_line(data[offset:offset + 0x10]))
 
 
 def hexdump(data, start=0):
@@ -109,6 +106,7 @@ def hexdump(data, start=0):
 # (You'll note that the Reply doesn't seem to tell you how much data it's
 # sending you, which makes interpreting the reply a little trickier..)
 
+
 class BindataMixin(object):
     _struct = None
 
@@ -122,8 +120,7 @@ class BindataMixin(object):
     def _hexdump(self):
         data = self._pack()
         size = self._struct.size
-        return '\n'.join(hexdump_line(data[s:s + 0x10])
-                         for s in range(0, size, 0x10))
+        return '\n'.join(hexdump_line(data[s:s + 0x10]) for s in range(0, size, 0x10))
 
     def _calculate_checksum(self):
         return mycrc16(self._replace(checksum=0)._pack())
@@ -275,13 +272,23 @@ class DK61(object):
             if oneDevice["vendor_id"] == vendorId and oneDevice["product_id"] == productId and \
                     oneDevice["interface_number"] == interfaceNumber:
                 path = oneDevice["path"]
-                logger.debug("-------------------------------------------------------------------------------------------")
+                logger.debug(
+                    "-------------------------------------------------------------------------------------------"
+                )
                 logger.debug("Found device with path: %s" % path)
                 logger.debug(pp.pformat(oneDevice))
                 return hid.Device(path=path)
         return None
 
-    def sendCommand(self, cmd, subcmd, offset=0, length=0, data=None, getreply=True, verbose=False, replytimeout=100,
+    def sendCommand(self,
+                    cmd,
+                    subcmd,
+                    offset=0,
+                    length=0,
+                    data=None,
+                    getreply=True,
+                    verbose=False,
+                    replytimeout=100,
                     smallOffset=False):
         if offset & 0xff000000:
             raise ValueError("offset {:#010x} > 0x00ffffff".format(offset))
@@ -290,7 +297,8 @@ class DK61(object):
         if smallOffset:
             pkt = CommandPacket(cmd, subcmd, offset & 0xffff, length, 0, 0, data)._replace_checksum()
         else:
-            pkt = CommandPacket(cmd, subcmd, offset & 0xffff, offset >> 16, length, 0, data)._replace_checksum()
+            pkt = CommandPacket(cmd, subcmd, offset & 0xffff, offset >> 16, length, 0,
+                                data)._replace_checksum()
         if verbose:
             print("send packet:")
             print(pkt._hexdump())
@@ -306,7 +314,8 @@ class DK61(object):
     def setAllLayers(self, keymap):
         for layerName, layerKeymap in keymap["keyLayers"].items():
             # first check that all keys inside the layer are valid
-            logger.debug("-----------------------------------------------------------------------------------------")
+            logger.debug(
+                "-----------------------------------------------------------------------------------------")
             logger.debug("Set layer %s" % layerName)
             layercode = 0
             for srcKeyName, dstKeyName in layerKeymap.items():
@@ -360,7 +369,8 @@ class DK61(object):
                     driverColorCodes[locationCode] = colorCode
             layerCodeInfo = self.layerCodes[layerName]
             layerCode = layerCodeInfo["code"]
-            logger.debug("Set static light for layer %s with code %d and %d keys" % (layerName, layerCode, len(driverColorCodes)))
+            logger.debug("Set static light for layer %s with code %d and %d keys" %
+                         (layerName, layerCode, len(driverColorCodes)))
             try:
                 self.wipeoutLayer(layerCode, KeyboardLayerDataType.Lighting.value)
             except:
@@ -395,6 +405,7 @@ class DK61(object):
         self.write32Bits(data, 4, 1)  # effect params
         self.write32Bits(data, 8, 0)
         self.write32Bits(data, 12, 0)
+        print('Hello world')
 
         for i in range(1, maxNumberOfEffects):
             self.write32Bits(data, i * effectHeaderSize + 0, -1)  # unused effects
@@ -421,7 +432,8 @@ class DK61(object):
             chunkSize = min(maxChunkSize, dataBufferSize - offset)
             packetData = data[offset:offset + chunkSize]
             logger.debug("Send packet %d at offset: %d" % (packetNumber, offset))
-            result = self.sendCommand(OpCodes.LayerSetLightValues.value, layerCode, offset, chunkSize, packetData, True, True, 1000)
+            result = self.sendCommand(OpCodes.LayerSetLightValues.value, layerCode, offset, chunkSize,
+                                      packetData, True, True, 1000)
             if result.cmd != OpCodes.LayerSetLightValues.value:
                 raise Error("Error returned")
             offset += chunkSize
@@ -440,7 +452,8 @@ class DK61(object):
                 driverKeycodesCounter += 1
                 self.write32Bits(data, keyBufferCounter, keycode)
                 keyBufferCounter += 4
-            result = self.sendCommand(opcode, layerCode, offset, keyBufferCounter, data, True, True, 100, True)
+            result = self.sendCommand(opcode, layerCode, offset, keyBufferCounter, data, True, True, 100,
+                                      True)
             if result.cmd != opcode:
                 raise Error("Error returned")
             offset += keyBufferCounter

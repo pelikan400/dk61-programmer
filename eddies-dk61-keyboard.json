@@ -32,18 +32,11 @@
       "RAlt": "red",
       "Menu": "red",
       "RCtrl": "red",
-      "W": "red",
-      "A": "red",
-      "S": "red",
-      "D": "red",
       "CloseSquareBrace": "red",
       "Quotes": "red",
       "0": "red",
       "Subtract": "red",
-      "Equal": "red",
-      "F": "red",
-      "G": "red",
-      "H": "red"
+      "Equal": "red"
     }
   },
   "keyLayers" : {
@@ -59,29 +52,26 @@
     },
     "FnLayer2" : {
       "Enter" : "Layer3Button",
-      "RShift": "Layer1Button"
+      "RShift": "Layer1Button",
+      "RAlt": "RAlt",
+      "Menu": "Menu",
+      "RCtrl": "RCtrl",
+      "Slash": "Slash"
     },
     "Layer3": {
       "Slash": "Up",
       "RAlt": "Left",
       "Menu": "Down",
       "RCtrl": "Right",
-      "W": "Up",
-      "A": "Left",
-      "S": "Down",
-      "D": "Right",
       "CloseSquareBrace": "PageUp",
-      "Quotes": "PageDown",
-      "0": "VolumeMute",
-      "Subtract": "VolumeDown",
-      "Equal": "VolumeUp",
-      "F": "VolumeMute",
-      "G": "VolumeDown",
-      "H": "VolumeUp"
+      "Quotes": "PageDown"
     },
     "FnLayer3" : {
       "Enter" : "Layer2Button",
-      "RShift": "Layer1Button"
+      "RShift": "Layer1Button",
+      "0": "VolumeMute",
+      "Subtract": "VolumeDown",
+      "Equal": "VolumeUp"
     }
   }
 }
